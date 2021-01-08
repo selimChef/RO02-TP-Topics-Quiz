@@ -1,0 +1,7 @@
+# Note from The Construct
+#
+# Put here your custom aliases. E.g.:
+#  export GAZEBO_RESOURCE_PATH=$GAZEBO_RESOURCE_PATH:/home/user/simulation_ws/src/my_package
+#  export MY_SETTING=value
+#
+# This file will be saved with your rosject.

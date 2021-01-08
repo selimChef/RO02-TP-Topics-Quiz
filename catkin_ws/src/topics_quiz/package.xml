@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+  <!-- Informations générales -->
+  <name>topics_quiz</name>
+  <version>0.0.0</version>
+  <description>The topics_quiz package</description>
+  <maintainer email="selim@chefchaouni-moussaoui@etudiant.univ-reims.fr">Sélim Chefchaouni Moussaoui</maintainer>
+  <license>BSD</license>
+
+  <!-- Dépendances -->
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_export_depend>rospy</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+</package>
