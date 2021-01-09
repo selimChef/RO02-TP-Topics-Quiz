@@ -1,59 +1,51 @@
 #! /usr/bin/env python
 
 import rospy
-from sensor_msgs.msg import LaserScan
-from geometry_msgs.msg import Twist, Vector3
-from numpy import random as np
+from sensor_msgs.msg import LaserScan 
+from geometry_msgs.msg import Twist
 
-# Python program to get average of a list
+def callback(msg): 
+    print msg.ranges[360] # affiche la distance de l'obstacle devant le robot
+    print msg.ranges[719] # affiche la distance de l'obstacle a droite du robot
+    print msg.ranges[0]   # affiche la distance de l'obstacle a gauche du robot
 
+    # S'il n'y a pas d'obstacle a moins d'un metre devant le robot, le robot 
+    # avance.
+    if msg.ranges[360] > 1:
+        move.linear.x = 0.3
+        move.angular.z = 0.0
+      
+    # S'il y a un obstacle a moins d'un metre devant le robot, le robot tourne a 
+    # gauche.
+    if msg.ranges[360] < 1: 
+        move.linear.x = 0.0
+        move.angular.z = 0.3
 
-def Average(lst):
-    return sum(lst) / len(lst)
+    # S'il y a un obstacle a moins d'un metre sur la droite du robot, le robot 
+    # tourne a gauche.
+    if msg.ranges[719] < 1:     # car 720 hors des limites
+        move.linear.x = 0.0
+        move.angular.z = -0.3
 
+    # S'il y a un obstacle a moins d'un metre sur la gauche du robot, le robot 
+    # tourne a droite.
+    if msg.ranges[0] < 1:
+        move.linear.x = 0.0
+        move.angular.z = 0.3
+    
+    pub.publish(move) # envoi des mouvements (publish)
 
-vel = Twist()
-
-
-def callback(msgs):
-    # print msgs  # This will print the whole Odometry message
-    # print msg.header  # This will print the header section of the Odometry message
-    # This will print the pose section of the Odometry message
-    # m = msgs[1:3]
-
-    last_range = 9999999999
-
-    ranges = msgs.ranges
-    middle_idx = len(ranges) // 2
-    this_range = ranges[middle_idx]
-
-    if range < 0.25:
-        if this_range < last_range:
-            if vel.linear.x > 0:
-                vel.linear.x -= 0.02
-            if vel.angular.z < 1:
-                vel.angular.z += 0.02
-        if this_range > last_range:
-            if vel.linear.x < 1:
-                vel.linear.x += 0.02
-            if vel.angular.z > 0:
-                vel.angular.z -= 0.02
-    else:
-        linear_x = np.rand()
-        angular_z = np.rand()
-        vel.linear = Vector3(linear_x, 0, 0)
-        vel.angular = Vector3(0, 0, angular_z)
-
-
+# initialisation du noeud topics_quiz_node
 rospy.init_node('topics_quiz_node')
 
-pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
-sub = rospy.Subscriber('/kobuki/laser/scan', LaserScan, callback)
-rate = rospy.Rate(2)
+# lecture sur le topic du laser
+sub = rospy.Subscriber('/kobuki/laser/scan', LaserScan, callback) 
 
+# ecriture sur le topic de mouvements du robot
+pub = rospy.Publisher('/cmd_vel', Twist)
 
-while not rospy.is_shutdown():
+# lancement du message Twist
+move = Twist()
 
-    pub.publish(vel)
-    rate.sleep()
-    # rospy.spin()
+# maintient du node jusqu'au shutdown
+rospy.spin()
